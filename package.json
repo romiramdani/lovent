@@ -1,0 +1,35 @@
+{
+  "name": "lovent",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/romiramdani/lovent#readme",
+  "bugs": {
+    "url": "https://github.com/romiramdani/lovent/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romiramdani/lovent.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "fast-csv": "^5.0.2",
+    "mysql2": "^3.14.1",
+    "qr-image": "^3.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
