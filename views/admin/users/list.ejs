@@ -61,8 +61,7 @@
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="/admin/users/update/<%= user.id %>"><i class="icon-base bx bx-edit-alt me-1"></i> Edit</a>
-                                            <form action="/admin/users/delete" method="POST" class="d-block" onsubmit="return confirm('Yakin ingin menghapus User ini?')">
-                                                <input type="hidden" name="id" value="<%= user.id %>">
+                                            <form action="/admin/users/delete/<%= user.id %>?_method=delete" method="POST" class="d-block" onsubmit="return confirm('Yakin ingin menghapus User ini?')">
                                                 <button type="submit" class="dropdown-item text-danger">
                                                     <i class="icon-base bx bx-trash me-1"></i> Hapus
                                                 </button>

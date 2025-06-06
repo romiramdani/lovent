@@ -112,7 +112,7 @@ module.exports = {
         }
     },
     deleteUser: async (req, res) => {
-        const {id} = req.body;
+        const {id} = req.params;
                 
         try {
             await db.execute(`DELETE FROM users WHERE id = ?`, [id]);

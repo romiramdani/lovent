@@ -1,0 +1,52 @@
+<%- include('../../partials/admin/header') %>
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card-header mb-5">
+            <div class="row align-items-center">
+                <!-- Judul -->
+                <div class="col-md-4 col-sm-12 mb-2 mb-md-0">
+                    <h5 class="mb-0">List Barang</h5>
+                </div>
+
+                <!-- Form Filter -->
+                <div class="col-md-5 col-sm-8 mb-2 mb-sm-0">
+                    <form class="d-flex" method="GET" action="">
+                        <select name="departemen" class="form-select me-2" onchange="this.form.submit()" >
+                            <option value="">Semua Departemen</option>
+                            <% daftarDepartemen.forEach(dep => { %>
+                                <option value="<%= dep %>" <%= departemen === dep ? 'selected' : '' %>>
+                                <%= dep %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </form>
+                </div>
+
+                <div class="col-md-3 col-sm-4 text-end">
+                    <a href="/admin/items/list/Download" class="btn btn-success w-100 w-md-auto">
+                        <i class="bx bx-download me-3"></i> Download
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <% if (items.length > 0) { %>
+            <% items.forEach(item => { %>            
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card text-center h-100">
+                        <img src="/img/items/<%= item.gambar %>" class="card-img-top img-fluid" alt="<%= item.nama %>" style="height: 150px; object-fit: cover;" />
+                        <div class="card-body py-2 px-3">
+                            <h6 class="card-title mb-1"><%= item.id %></h6>
+                            <p class="card-text mb-2 text-truncate"><%= item.nama %></p>
+                            <a href="/admin/items/list/<%= item.id %>" class="btn btn-sm btn-primary">Detail</a>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+            <% } else { %>
+            <p class="text-center">No item available</p>
+            <% } %>
+        </div>
+    </div>
+
+<%- include('../../partials/admin/footer') %>

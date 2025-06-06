@@ -1,7 +1,8 @@
 const express = require('express');
 const session = require('express-session');
-const path = require('path')
+const path = require('path');
 const app = express();
+const methodOverride = require('method-override');
 const routes = require('./routes/index.js')
 const port = 3000;
 
@@ -21,8 +22,10 @@ app.use(
 
 app.use(express.static(path.join(__dirname, 'public')))
 
+app.use(methodOverride('_method'));
+
 app.use((req, res, next) => {
-    res.locals.currentUrl = req.path;
+    res.locals.currentUrl = req.path;    
     next();
 });
 

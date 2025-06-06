@@ -21,25 +21,25 @@
             <span class="menu-header-text">Apps &amp; Pages</span>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item <%= currentUrl.startsWith('/admin/items') ? 'active open' : '' %>">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div class="text-truncate">Items</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item <%= currentUrl === '/admin/items/list' ? 'active' : '' %>">
+                    <a href="/admin/items/list" class="menu-link">
                         <div class="text-truncate">List Barang</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+                <li class="menu-item <%= currentUrl === '/admin/items/add' ? 'active' : '' %>">
+                    <a href="/admin/items/add" class="menu-link">
                         <div class="text-truncate">Tambah Barang</div>
                     </a>
                 </li>
             </ul>
         </li>
-        <li class="menu-item <%= currentUrl.startsWith('/admin/users') %>">
+        <li class="menu-item <%= currentUrl.startsWith('/admin/users') ? 'active' : '' %>">
             <a href="/admin/users/list" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-table"></i>
                 <div class="text-truncate">Users</div>

@@ -1,0 +1,41 @@
+<%- include('../../partials/admin/header') %>
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row g-4">
+            <!-- Gambar kode QR (kotak) -->
+            <div class="col-md-5 col-lg-4 d-flex justify-content-center align-items-center">
+            <div class="card p-3" style="width: 320px; height: 320px; display: flex; justify-content: center; align-items: center; background-color: #fff;">
+                <img src="/img/items/<%= item.gambar %>" 
+                    alt="<%= item.nama %>" 
+                    style="width: 320px; height: 320px; object-fit: contain;" />
+            </div>
+            </div>
+
+            <!-- Info barang dan tombol -->
+            <div class="col-md-7 col-lg-8">
+            <div class="card p-3 h-100">
+                <h3 class="mb-3"><%= item.nama %></h3>
+                <p><strong>Id Barang:</strong> <%= item.id %></p>
+                <p><strong>Departemen:</strong> <%= item.departemen %></p>
+                <p><strong>Lokasi:</strong> <%= item.lokasi %></p>
+                <p><strong>Tanggal Masuk:</strong> <%= item.tgl_masuk %></p>
+                <p><strong>Status:</strong> <%= item.status %></p>
+                <p><strong>Deskripsi:</strong></p>
+                <p><%= item.deskripsi %></p>
+
+                <div class="mt-4">
+                    <a href="/admin/items/list/update/<%= item.id %>" class="btn btn-warning me-2">
+                        <i class="bx bx-edit"></i> Edit
+                    </a>
+                    <form action="/admin/items/list/delete/<%= item.id %>?_method=delete" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus item ini?');">
+                        <button type="submit" class="btn btn-danger">
+                        <i class="bx bx-trash"></i> Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('../../partials/admin/footer') %>

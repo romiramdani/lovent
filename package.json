@@ -26,6 +26,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "fast-csv": "^5.0.2",
+    "method-override": "^3.0.0",
     "mysql2": "^3.14.1",
     "qr-image": "^3.2.0"
   },
