@@ -16,7 +16,7 @@ module.exports = {
             const user = rows[0];
             const match = await bcrypt.compare(password, user.password);
             if (match) {
-                req.session.user = { id: user.id, username: user.username };
+                req.session.user = { id: user.id, username: user.username, departemen: user.departemen };
                 if (user.role == 1) {
                     return res.redirect('/admin/home');
                 } else if (user.role == 2) {

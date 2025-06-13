@@ -62,10 +62,16 @@ module.exports = {
     },
 
     getInsertPage: (req, res) => {
+        if(!req.session.user) {
+            return res.redirect('/login');
+        }
         res.render('admin/items/add', {error: null})
     },
 
     addItem: async (req, res) => {
+        if(!req.session.user) {
+            return res.redirect('/login')
+        }
         const {id, nama, departemen, lokasi, deskripsi} = req.body;
 
         const qrCode = await generateQrCode(id);
