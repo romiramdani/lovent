@@ -76,7 +76,7 @@
 
             <!-- Misc -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-        <li class="menu-item">
+        <li class="menu-item <%= currentUrl.startsWith('/admin/history') ? 'active open' : '' %>">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-file"></i>
                 <div class="text-truncate">History</div>
@@ -87,8 +87,8 @@
                         <div class="text-truncate">Peminjaman</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+        <li class="menu-item <%= currentUrl == '/admin/history/store' ? 'active' : '' %>">
+                    <a href="/admin/history/store" class="menu-link">
                         <div class="text-truncate">Penyimpanan</div>
                     </a>
                 </li>
