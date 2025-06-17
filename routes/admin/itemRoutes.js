@@ -1,13 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const itemControllers = require('../../controllers/admin/itemController');
+const adminItemControllers = require('../../controllers/admin/itemController');
 
-router.delete('/list/delete/:id', itemControllers.deleteItem);
-router.put('/list/update/:id', itemControllers.updateItem);
-router.get('/list/update/:id', itemControllers.getUpdateItem);
-router.post('/add', itemControllers.addItem);
-router.get('/add', itemControllers.getInsertPage);
-router.get('/list/:id', itemControllers.getItemDetail);
-router.get('/list', itemControllers.getAllItems);
+router.post('/return/confirm', adminItemControllers.confirmReturnRequest);
+router.post('/return/reject', adminItemControllers.rejectReturnRequest);
+router.get('/return', adminItemControllers.getReturnRequests);
+router.post('/borrow/confirm', adminItemControllers.confirmBorrowRequest);
+router.post('/borrow/reject', adminItemControllers.rejectBorrowRequest);
+router.get('/borrow', adminItemControllers.getBorrowRequests);
+router.delete('/list/delete/:id', adminItemControllers.deleteItem);
+router.put('/list/update/:id', adminItemControllers.updateItem);
+router.get('/list/update/:id', adminItemControllers.getUpdateItem);
+router.post('/add', adminItemControllers.addItem);
+router.get('/list/add', adminItemControllers.getInsertPage);
+router.get('/list/:id', adminItemControllers.getItemDetail);
+router.get('/list', adminItemControllers.getAllItems);
 
 module.exports = router;

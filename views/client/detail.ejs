@@ -1,0 +1,44 @@
+<%- include('../partials/client/header') %>
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row g-4">
+            <!-- Gambar kode QR (kotak) -->
+            <div class="col-md-5 col-lg-4 d-flex justify-content-center align-items-center">
+            <div class="card p-3" style="width: 320px; height: 320px; display: flex; justify-content: center; align-items: center; border: 1px solid #ddd; background-color: #fff;">
+                <img src="/img/items/<%= item.gambar %>" 
+                    alt="<%= item.nama %>" 
+                    style="width: 300px; height: 300px; object-fit: contain;" />
+            </div>
+            </div>
+
+            <!-- Info barang dan tombol -->
+            <div class="col-md-7 col-lg-8">
+            <div class="card p-3 h-100">
+                <h3 class="mb-3"><%= item.nama %></h3>
+                <p><strong>Departemen:</strong> <%= item.departemen %></p>
+                <p><strong>Lokasi:</strong> <%= item.lokasi %></p>
+                <p><strong>Tanggal Masuk:</strong> <%= item.tgl_masuk %></p>
+                <p><strong>Status:</strong> <%= item.status %></p>
+                <p><strong>Deskripsi:</strong></p>
+                <p><%= item.deskripsi %></p>
+
+                <div class="mt-4">
+                    <form action="/items/borrow" method="POST" class="d-inline">
+                        <input type="hidden" name="itemId" value="<%= item.id %>">
+                        <button type="submit" class="btn btn-success" <%= item.status == 'tersedia' ? '' : 'disabled' %>>
+                        <i class="bx bx-receipt"></i> Pinjam
+                        </button>
+                    </form>
+                    <form action="/items/takeover" method="POST" class="d-inline">
+                        <input type="hidden" name="itemId" value="<%= item.id %>">
+                        <button type="submit" class="btn btn-warning" <%= item.status == 'tersedia' ? '' : 'disabled' %>>
+                        <i class="bx bx-box"></i> Takeover
+                        </button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('../partials/client/footer') %>

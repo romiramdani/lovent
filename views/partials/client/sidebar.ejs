@@ -21,8 +21,8 @@
             <span class="menu-header-text">Apps &amp; Pages</span>
         </li>
 
-        <li class="menu-item">
-            <a href="#" class="menu-link">
+        <li class="menu-item <%= currentUrl === '/items/list' ? 'active' : '' %>">
+            <a href="/items/list" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div class="text-truncate">Items</div>
             </a>
@@ -43,8 +43,8 @@
             <div class="text-truncate">Take over</div>
         </a>
         </li>
-        <li class="menu-item">
-            <a href="#" class="menu-link">
+        <li class="menu-item <%= currentUrl === '/items/borrowed' ? 'active' : '' %>">
+            <a href="/items/borrowed" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
                 <div class="text-truncate">Pengembalian</div>
             </a>
@@ -52,14 +52,14 @@
 
             <!-- Misc -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-        <li class="menu-item">
+        <li class="menu-item <%= currentUrl.startsWith('/items/history') ? 'active open' : '' %>">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-file"></i>
                 <div class="text-truncate">History</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
+        <li class="menu-item <%= currentUrl === '/items/history/borrow' ? 'active' : '' %>">
+                    <a href="/items/history/borrow" class="menu-link">
                         <div class="text-truncate">Peminjaman</div>
                     </a>
                 </li>

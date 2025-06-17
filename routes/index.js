@@ -4,7 +4,9 @@ const loginRoutes = require('./loginRoutes.js');
 const logoutRoutes = require('./logoutRoutes.js');
 const adminUserRoutes = require('./admin/userRoutes.js');
 const adminItemRoutes = require('./admin/itemRoutes.js');
-const adminHistoryRoutes = require('./admin/historyRoutes.js')
+const adminHistoryRoutes = require('./admin/historyRoutes.js');
+const itemRoutes = require('./client/itemRoutes.js')
+
 
 const adminHomeController = require('../controllers/admin/homeController.js');
 
@@ -21,6 +23,7 @@ router.use('/admin/items', adminItemRoutes);
 router.use('/admin/users', adminUserRoutes);
 router.get('/admin/home', adminHomeController.getHomePage);
 
+router.use('/items', itemRoutes);
 router.use('/home', homeController.getHomePage);
 
 router.use((req, res) => {

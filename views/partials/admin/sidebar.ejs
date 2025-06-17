@@ -21,7 +21,7 @@
             <span class="menu-header-text">Apps &amp; Pages</span>
         </li>
 
-        <li class="menu-item <%= currentUrl.startsWith('/admin/items') ? 'active open' : '' %>">
+        <li class="menu-item <%= currentUrl.startsWith('/admin/items/list') ? 'active open' : '' %>">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div class="text-truncate">Items</div>
@@ -32,8 +32,8 @@
                         <div class="text-truncate">List Barang</div>
                     </a>
                 </li>
-                <li class="menu-item <%= currentUrl === '/admin/items/add' ? 'active' : '' %>">
-                    <a href="/admin/items/add" class="menu-link">
+                <li class="menu-item <%= currentUrl === '/admin/items/list/add' ? 'active' : '' %>">
+                    <a href="/admin/items/list/add" class="menu-link">
                         <div class="text-truncate">Tambah Barang</div>
                     </a>
                 </li>
@@ -61,14 +61,14 @@
             <div class="text-truncate">Take over</div>
         </a>
         </li>
-        <li class="menu-item">
-            <a href="#" class="menu-link">
+        <li class="menu-item <%= currentUrl === '/admin/items/borrow' ? 'active' : '' %>">
+            <a href="/admin/items/borrow" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
                 <div class="text-truncate">Peminjaman</div>
             </a>
         </li>
-        <li class="menu-item">
-            <a href="#" class="menu-link">
+        <li class="menu-item <%= currentUrl === '/admin/items/return' ? 'active' : '' %>">
+            <a href="/admin/items/return" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
                 <div class="text-truncate">Pengembalian</div>
             </a>
@@ -87,7 +87,7 @@
                         <div class="text-truncate">Peminjaman</div>
                     </a>
                 </li>
-        <li class="menu-item <%= currentUrl == '/admin/history/store' ? 'active' : '' %>">
+                <li class="menu-item <%= currentUrl === '/admin/history/store' ? 'active' : '' %>">
                     <a href="/admin/history/store" class="menu-link">
                         <div class="text-truncate">Penyimpanan</div>
                     </a>

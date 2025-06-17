@@ -133,5 +133,89 @@ module.exports = {
         } catch (error) {
             res.status(500).send('Terjadi kesalahan: ' + error.message);
         }
-    }
+    },
+
+    getBorrowRequests: async (req, res) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; // Jumlah data per halaman
+        const offset = (page - 1) * limit;
+
+        try {
+            const [total] = await db.execute(`SELECT COUNT(*) as count FROM h_peminjaman WHERE status = 'pending_borrow'`);
+            const totalRequest = total[0].count;
+            
+            const totalPages = Math.ceil(totalRequest / limit);
+            const [rows] = await db.execute(
+                `SELECT id, departemen, username, item_id, nama_barang, tgl_pinjam FROM h_peminjaman WHERE status = 'pending_borrow' LIMIT ? OFFSET ?`, [limit, offset]
+            );
+            const requests = rows.map(r => ({
+                ...r,
+                tgl_pinjam: formatDate(r.tgl_pinjam)
+            }))            
+
+            res.render('admin/items/borrow', { requests, page, totalPages, totalRequest });
+        } catch (error) {
+            res.status(500).send("Error: " + error.message);
+        }
+    },
+
+    confirmBorrowRequest: async (req, res) => {
+        const { id } = req.body;
+        
+        await db.execute(
+            `UPDATE h_peminjaman SET tgl_pinjam = NOW(), status = 'dipinjam' WHERE id = ?`, [id]
+        );
+        res.redirect('/admin/items/borrow');
+    },
+
+    rejectBorrowRequest: async (req, res) => {
+        const { id } = req.body;                
+        await db.execute(`UPDATE h_peminjaman h JOIN items i ON h.item_id = i.id SET h.status = 'ditolak', i.status = 'tersedia' WHERE h.id = ?`, [id]);
+        res.redirect('/admin/items/borrow');
+    },
+
+    getReturnRequests: async (req, res) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        try {
+            const [total] = await db.execute("SELECT COUNT(*) as count FROM h_peminjaman WHERE status = 'pending_return'");
+            const totalRequest = total[0].count;
+            
+            const totalPages = Math.ceil(totalRequest / limit);
+            const [rows] = await db.execute(
+                `SELECT * FROM h_peminjaman WHERE status = 'pending_return' LIMIT ? OFFSET ?`, [limit, offset]
+            );
+
+            const requests = rows.map(r => ({
+                ...r,
+                tgl_pinjam: formatDate(r.tgl_pinjam),
+                tgl_kembali: formatDate(r.tgl_kembali),
+            }))            
+            res.render('admin/items/return', { requests, page, totalPages, totalRequest });
+        } catch (error) {
+        res.status(500).send("Error: " + error.message);
+        }
+    },
+
+    confirmReturnRequest: async (req, res) => {
+        const { id } = req.body;
+
+        await db.execute(`
+            UPDATE h_peminjaman h
+            JOIN items i ON h.item_id = i.id
+            SET h.tgl_kembali = NOW(), h.status = 'dikembalikan', i.status = 'tersedia'
+            WHERE h.id = ?
+        `, [id]);
+        
+        res.redirect('/admin/items/return');
+    },
+
+    rejectReturnRequest: async (req, res) => {
+        const { id } = req.body;
+        
+        await db.execute(`UPDATE h_peminjaman SET tgl_kembali = NULL, status = 'dipinjam' WHERE id = ?`, [id]);
+        res.redirect('/admin/items/return');
+    },
 }
