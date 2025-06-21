@@ -87,4 +87,45 @@ module.exports = {
             res.status(500).send('Terjadi kesalahan: ' + err.message);
         }
     },
+
+    getStoreHistory: async (req, res) => {
+        const userId = req.session.user.id;
+    
+        try {
+            const [rows] = await db.query('SELECT * FROM h_penyimpanan WHERE user_id = ? ORDER BY tanggal ASC', [userId] );
+            const history = rows.map(h => ({
+                ...h,
+                tanggal: formatDate(h.tanggal),
+            }))
+            
+            res.render('client/storeHistory', { history });
+        } catch (err) {
+            res.status(500).send('Terjadi kesalahan: ' + err.message);
+        }
+    },
+    getStoreItem: async (req, res) => {
+        res.render('client/store', { error: null });
+    },
+
+    storeItem: async (req, res) => {
+        if (!req.session.user) {
+            return res.redirect('/login');
+        }
+
+        const {nama, deskripsi} = req.body;
+        
+        const userId = req.session.user.id;
+        const {username, departemen} = req.session.user;
+
+        try {
+
+            await db.query(`
+                INSERT INTO h_penyimpanan (user_id, username, departemen, nama_barang, deskripsi, tanggal, permintaan, status)
+                VALUES (?, ?, ?, ?, ?, NOW(), 'masuk', 'diproses')
+            `, [userId, username, departemen, nama, deskripsi]);
+                res.redirect('/items/history/store');
+        } catch (err) {
+            res.status(500).send('Terjadi kesalahan: ' + err.message);
+        }
+    },
 }

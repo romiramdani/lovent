@@ -218,4 +218,69 @@ module.exports = {
         await db.execute(`UPDATE h_peminjaman SET tgl_kembali = NULL, status = 'dipinjam' WHERE id = ?`, [id]);
         res.redirect('/admin/items/return');
     },
+    getStoreRequests: async (req, res) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; // Jumlah data per halaman
+        const offset = (page - 1) * limit;
+
+        try {
+            const [total] = await db.execute(`SELECT COUNT(*) as count FROM h_penyimpanan WHERE permintaan = 'masuk' AND status = 'diproses'`);
+            const totalRequest = total[0].count;
+            
+            const totalPages = Math.ceil(totalRequest / limit);
+            const [rows] = await db.execute(
+                `SELECT id, departemen, username, item_id, nama_barang, tanggal FROM h_penyimpanan WHERE permintaan = 'masuk' AND status = 'diproses' LIMIT ? OFFSET ?`, [limit, offset]
+            );
+            const requests = rows.map(r => ({
+                ...r,
+                tanggal: formatDate(r.tanggal)
+            }))
+
+            res.render('admin/items/storeRequest', { requests, page, totalPages, totalRequest });
+        } catch (error) {
+            res.status(500).send("Error: " + error.message);
+        }
+    },
+
+    getFormStoreRequest: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const [rows] = await db.execute("SELECT id, nama_barang, departemen, deskripsi FROM h_penyimpanan WHERE id = ?", [id]);
+            res.render('admin/items/formStoreRequest',  {item : rows[0], error: null})
+        } catch (error) {
+            res.status(500).send("Error: " + error.message);
+        }
+    },
+
+    confirmStoreRequest: async (req, res) => {
+        const historyId = req.params.id;        
+        const {itemId, nama, departemen, lokasi, deskripsi } = req.body;
+
+        const qrUrl = await generateQrCode(itemId);
+
+        try {
+            await db.execute(
+                `INSERT INTO items (id, nama, departemen, lokasi, tgl_masuk, status, deskripsi, gambar) VALUES (?, ?, ?, ?, NOW(), 'tersedia', ?, ?)`,
+                [itemId, nama, departemen, lokasi, deskripsi, qrUrl]
+            );
+            await db.execute(
+                `UPDATE h_penyimpanan SET item_id = ?, status = 'disetujui' WHERE id = ?`, [itemId, historyId]
+            );
+            
+            res.redirect('/admin/items/list');
+        } catch (err) {
+            res.status(500).send('Terjadi kesalahan: ' + err.message);
+        }
+    },
+    rejectStoreRequest: async (req, res) => {
+        const {historyId} = req.body;
+        try {
+            await db.execute(
+                `UPDATE h_penyimpanan SET status = 'ditolak' WHERE id = ?`, [historyId]
+            );
+            res.redirect('/admin/items/store');
+        } catch (err) {
+            res.status(500).send('Terjadi kesalahan: ' + err.message);
+        }
+    }
 }

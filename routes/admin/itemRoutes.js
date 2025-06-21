@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const adminItemControllers = require('../../controllers/admin/itemController');
 
+router.post('/store/reject', adminItemControllers.rejectStoreRequest);
+router.post('/store/:id', adminItemControllers.confirmStoreRequest);
+router.get('/store/:id', adminItemControllers.getFormStoreRequest)
+router.get('/store', adminItemControllers.getStoreRequests);
 router.post('/return/confirm', adminItemControllers.confirmReturnRequest);
 router.post('/return/reject', adminItemControllers.rejectReturnRequest);
 router.get('/return', adminItemControllers.getReturnRequests);

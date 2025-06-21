@@ -1,0 +1,52 @@
+<%- include('../../partials/admin/header') %>
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 col-sm-12 mb-2 mb-md-0">
+                            <h4 class="mb-0">Riwayat Peminjaman</h4>
+                        </div>
+
+                        <div class="col-md-3 col-sm-4 text-end">
+                            <a href="/admin/history/borrow/download" class="btn btn-success w-75 w-md-auto">
+                                <i class="bx bx-download me-3"></i> Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive text-nowrap">
+                <% if (history.length > 0) { %>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>username</th>
+                                <th>Departemen</th>
+                                <th>Nama Barang</th>
+                                <th>Tanggal Peminjaman</th>
+                                <th>Tanggal Pengembalian</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                        <% history.forEach((h, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= h.username %></td>
+                                <td><%= h.departemen %></td>
+                                <td><%= h.nama_barang %></td>
+                                <td><%= h.tgl_pinjam %></td>
+                                <td><%= h.tgl_kembali %></td>
+                                <td><%= h.status %></td>
+                            </tr>
+                        <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p class="text-center">History kosong</p>
+                <% } %>
+                </div>
+            </div>
+        </div>
+
+<%- include('../../partials/admin/footer') %>

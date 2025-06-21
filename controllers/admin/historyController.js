@@ -43,4 +43,44 @@ module.exports = {
             res.status(500).send('Gagal generate CSV: ' + err.message);
         }
     },
+
+    getBorrowHistory: async (req, res) => {
+        const [rows] = await db.query(`SELECT * FROM h_peminjaman`);
+
+        const history = rows.map(h => ({
+            ...h,
+            tgl_pinjam: formatDate(h.tgl_pinjam),
+            tgl_kembali: formatDate(h.tgl_kembali),
+        }))
+            
+        res.render('admin/history/borrow', { history });
+    },
+    downloadBorrowHistoryCSV: async (req, res) => {
+        try {
+            const [rows] = await db.query(`SELECT * FROM h_peminjaman`);
+
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', 'attachment; filename=riwayat_peminjaman.csv');
+
+            const csvStream = format({ headers: true });
+            csvStream.pipe(res);
+
+            rows.forEach((h, index) => {
+                csvStream.write({
+                    No: index + 1,
+                    Username: h.username,
+                    Departemen: h.departemen,
+                    ID_Barang: h.item_id,
+                    Nama_Barang: h.nama_barang,
+                    Tanggal_Peminjaman: formatDate(h.tgl_pinjam),
+                    Tanggal_Pengembalian: formatDate(h.tgl_kembali),
+                    Status: h.status
+                });
+            });
+
+            csvStream.end();
+        } catch (err) {
+            res.status(500).send('Gagal generate CSV: ' + err.message);
+        }
+    },
 }
