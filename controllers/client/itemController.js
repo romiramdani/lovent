@@ -4,10 +4,24 @@ const {formatDate} = require('../../utils/dateFormatter.js')
 module.exports = {
     getItems: async (req, res) => {
         const {departemen} = req.session.user;
-        
-        const [items] = await db.query(`SELECT * FROM items WHERE departemen = ?`, [departemen]);
-        
-        res.render('client/items', { items });
+        const searchQuery = req.query.search || '';
+
+        try {
+            let whereClause = 'WHERE departemen = ?';
+            const values = [departemen];
+
+            if (searchQuery) {
+                whereClause += " AND (nama LIKE ? OR lokasi LIKE ?)";
+                values.push(`%${searchQuery}%`, `%${searchQuery}%`);
+            }
+
+            const [items] = await db.execute(`SELECT * FROM items ${whereClause}`, values)
+
+            res.render('client/items', { items, search: searchQuery });
+
+        } catch (error) {
+            res.status(500).send("Terjadi kesalahan: " + error.message);
+        }                
     },
 
     getItemDetail : async (req, res) => {
