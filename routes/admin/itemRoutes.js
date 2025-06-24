@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const adminItemControllers = require('../../controllers/admin/itemController');
 
+router.post('/takeover/confirm', adminItemControllers.confirmTakeoverRequest);
+router.post('/takeover/reject', adminItemControllers.rejectTakeoverRequest);
+router.get('/takeover', adminItemControllers.getTakeoverRequests);
 router.post('/store/reject', adminItemControllers.rejectStoreRequest);
 router.post('/store/:id', adminItemControllers.confirmStoreRequest);
 router.get('/store/:id', adminItemControllers.getFormStoreRequest)

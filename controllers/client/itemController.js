@@ -128,4 +128,30 @@ module.exports = {
             res.status(500).send('Terjadi kesalahan: ' + err.message);
         }
     },
+
+    takeoverItem: async (req, res) => {
+        try {
+            const { itemId } = req.body;
+            const userId = req.session.user.id;
+            const {username, departemen} = req.session.user;
+
+            const [item] = await db.query(`SELECT nama, deskripsi FROM items WHERE id = ? AND status = 'tersedia'`, [itemId]);
+            
+            
+            if (item.length > 0) {
+            await db.query(`
+                INSERT INTO h_penyimpanan (user_id, username, departemen, item_id, nama_barang, deskripsi, tanggal, permintaan, status)
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), 'keluar', 'diproses')
+            `, [userId, username, departemen, itemId, item[0].nama, item[0].deskripsi]);
+                await db.query(`UPDATE items SET status = 'keluar' WHERE id = ? `, [itemId]);
+
+                res.redirect(`/items/list/${itemId}`);
+            } else {
+                res.status(400).send('Barang tidak tersedia');
+            }
+        } catch (err) {
+            res.status(500).send('Terjadi kesalahan: ' + err.message);
+        }
+
+    },
 }

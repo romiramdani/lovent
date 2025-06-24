@@ -282,5 +282,44 @@ module.exports = {
         } catch (err) {
             res.status(500).send('Terjadi kesalahan: ' + err.message);
         }
-    }
+    },
+
+    getTakeoverRequests: async (req, res) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; // Jumlah data per halaman
+        const offset = (page - 1) * limit;
+
+        try {
+            const [total] = await db.execute(`SELECT COUNT(*) as count FROM h_penyimpanan WHERE permintaan = 'keluar' AND status = 'diproses'`);
+            const totalRequest = total[0].count;
+            
+            const totalPages = Math.ceil(totalRequest / limit);
+            const [rows] = await db.execute(
+                `SELECT id, departemen, username, item_id, nama_barang, tanggal FROM h_penyimpanan WHERE permintaan = 'keluar' AND status = 'diproses' LIMIT ? OFFSET ?`, [limit, offset]
+            );
+            const requests = rows.map(r => ({
+                ...r,
+                tanggal: formatDate(r.tanggal)
+            }))
+
+            res.render('admin/items/takeover', { requests, page, totalPages, totalRequest });
+        } catch (error) {
+            res.status(500).send("Error: " + error.message);
+        }
+    },
+
+    confirmTakeoverRequest: async (req, res) => {
+        const { id, itemId } = req.body;
+        
+        await db.execute(`UPDATE h_penyimpanan SET tanggal = NOW(), status = 'disetujui' WHERE id = ?`, [id]);
+        await db.execute(`DELETE FROM items WHERE id = ?`, [itemId]);
+        res.redirect('/admin/items/takeover');
+    },
+
+    rejectTakeoverRequest: async (req, res) => {
+        const { id, itemId } = req.body;                
+        await db.execute(`UPDATE h_penyimpanan SET status = 'ditolak' WHERE id = ?`, [id]);
+        await db.execute(`UPDATE items SET status = 'tersedia' WHERE id = ?`, [itemId]);
+        res.redirect('/admin/items/takeover');
+    },
 }
