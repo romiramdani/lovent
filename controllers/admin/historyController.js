@@ -4,14 +4,50 @@ const {formatDate} = require('../../utils/dateFormatter.js');
 
 module.exports = {
     getStoreHistory: async (req, res) => {
-        const [rows] = await db.query(`SELECT * FROM h_penyimpanan`);
+        const page = parseInt(req.query.page) || 1;
+        const limit = 20;
+        const offset = (page -1) * limit;
 
-        const history = rows.map(h => ({
-            ...h,
-            tanggal: formatDate(h.tanggal),
-        }))
+        const search = req.query.search || '';
+        const permintaanFilter = req.query.permintaan || '';
+
+        try {
+            let whereClause = 'WHERE 1=1';
+            const values = [];
+
+            if(search) {
+                whereClause += ` AND (nama_barang LIKE ?)`;
+                values.push(`%${search}%`);
+            }
+
+            if(permintaanFilter) {
+                whereClause += ` AND permintaan = ?`;
+                values.push(permintaanFilter);
+            }
+            const [countResult] = await db.execute(`SELECT COUNT(*) as count FROM h_penyimpanan ${whereClause}`, values);
+
+            const totalHistories = countResult[0].count;
+            const totalPages = Math.ceil(totalHistories / limit);
+
+            values.push(limit, offset);
+            const [rows] = await db.execute(`SELECT * FROM h_penyimpanan ${whereClause} LIMIT ? OFFSET ?`, values);
+
+            const histories = rows.map(h => ({
+                ...h,
+                tanggal: formatDate(h.tanggal),
+            }))
             
-        res.render('admin/history/store', { history });
+            res.render('admin/history/store', { 
+                histories,
+                page,
+                totalPages,
+                totalHistories,
+                search,
+                permintaan: permintaanFilter
+            });
+        } catch (err) {
+            res.status(500).send("Error : " + err.message);
+        }
     },
 
     downloadStoreHistoryCSV: async (req, res) => {
