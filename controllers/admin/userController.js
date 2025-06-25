@@ -1,11 +1,11 @@
-const db = require('../../config/database.js');
+const {db} = require('../../config/database.js');
 const bcrypt = require('bcrypt');
 
 module.exports = {
     getAllusers: async (req, res) => {
-        const page = parseInt(req.query.page) || 1;
+        const page = Math.floor(parseInt(req.query.page)) || 1;
         const limit = 10;
-        const offset = (page -1) * limit;
+        const offset = Math.floor((page -1) * limit);
 
         const search = req.query.search || '';
         const departemenFilter = req.query.departemen || '';
@@ -31,8 +31,7 @@ module.exports = {
             const totalUsers = countResult[0].count;
             const totalPages = Math.ceil(totalUsers / limit);
 
-            values.push(limit, offset);
-            const [users] = await db.execute(`SELECT id, nama, username, departemen, role FROM users ${whereClause} LIMIT ? OFFSET ?`, values);
+            const [users] = await db.execute(`SELECT id, nama, username, departemen, role FROM users ${whereClause} LIMIT ${limit} OFFSET ${offset}`, values);
 
             res.render('admin/users/list', {
                 users, 

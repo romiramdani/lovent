@@ -1,4 +1,4 @@
-const db = require('../config/database.js');
+const {db} = require('../config/database.js');
 const bcrypt = require('bcrypt');
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     login: async (req, res) => {
         const { username, password } = req.body;
         try {
-            const [rows] = await db.query("SELECT * FROM users WHERE username = ?", [username]);
+            const [rows] = await db.execute("SELECT * FROM users WHERE username = ?", [username]);
             if (rows.length === 0) {
                 return res.render('login', { error: 'Username tidak ditemukan!' });
             }

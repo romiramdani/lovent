@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const db = require('../../config/database');
+const {db} = require('../../config/database');
 const generateQrCode = require('../../utils/generateQr');
 const {formatDate} = require('../../utils/dateFormatter');
 const {format} = require('@fast-csv/format');
@@ -38,6 +38,35 @@ module.exports = {
 
         } catch (error) {
             res.status(500).send("Terjadi kesalahan: " + error.message);
+        }
+    },
+
+    downloadItemsCSV: async (req, res) => {
+        try {
+            const [rows] = await db.execute(`SELECT * FROM items`);
+
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', 'attachment; filename=list_barang.csv');
+
+            const csvStream = format({ headers: true });
+            csvStream.pipe(res);
+
+            rows.forEach((h, index) => {
+                csvStream.write({
+                    No: index + 1,
+                    ID_barang: h.id,
+                    Nama_Barang: h.nama,
+                    Departemen: h.departemen,
+                    Lokasi: h.lokasi,
+                    Deskripsi: h.deskripsi,
+                    Tanggal_Masuk: formatDate(h.tgl_masuk),
+                    Status: h.status
+                });
+            });
+
+            csvStream.end();
+        } catch (err) {
+            res.status(500).send('Gagal generate CSV: ' + err.message);
         }
     },
 
@@ -136,9 +165,9 @@ module.exports = {
     },
 
     getBorrowRequests: async (req, res) => {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 10; // Jumlah data per halaman
-        const offset = (page - 1) * limit;
+        const page = Math.floor(parseInt(req.query.page)) || 1;
+        const limit = 10;
+        const offset = Math.floor((page -1) * limit);
 
         try {
             const [total] = await db.execute(`SELECT COUNT(*) as count FROM h_peminjaman WHERE status = 'pending_borrow'`);
@@ -146,7 +175,7 @@ module.exports = {
             
             const totalPages = Math.ceil(totalRequest / limit);
             const [rows] = await db.execute(
-                `SELECT id, departemen, username, item_id, nama_barang, tgl_pinjam FROM h_peminjaman WHERE status = 'pending_borrow' LIMIT ? OFFSET ?`, [limit, offset]
+                `SELECT id, departemen, username, item_id, nama_barang, tgl_pinjam FROM h_peminjaman WHERE status = 'pending_borrow' LIMIT ${limit} OFFSET ${offset}`
             );
             const requests = rows.map(r => ({
                 ...r,
@@ -175,9 +204,9 @@ module.exports = {
     },
 
     getReturnRequests: async (req, res) => {
-        const page = parseInt(req.query.page) || 1;
+        const page = Math.floor(parseInt(req.query.page)) || 1;
         const limit = 10;
-        const offset = (page - 1) * limit;
+        const offset = Math.floor((page -1) * limit);
 
         try {
             const [total] = await db.execute("SELECT COUNT(*) as count FROM h_peminjaman WHERE status = 'pending_return'");
@@ -185,7 +214,7 @@ module.exports = {
             
             const totalPages = Math.ceil(totalRequest / limit);
             const [rows] = await db.execute(
-                `SELECT * FROM h_peminjaman WHERE status = 'pending_return' LIMIT ? OFFSET ?`, [limit, offset]
+                `SELECT * FROM h_peminjaman WHERE status = 'pending_return' LIMIT ${limit} OFFSET ${offset}`,
             );
 
             const requests = rows.map(r => ({
@@ -219,9 +248,9 @@ module.exports = {
         res.redirect('/admin/items/return');
     },
     getStoreRequests: async (req, res) => {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 10; // Jumlah data per halaman
-        const offset = (page - 1) * limit;
+        const page = Math.floor(parseInt(req.query.page)) || 1;
+        const limit = 10;
+        const offset = Math.floor((page -1) * limit);
 
         try {
             const [total] = await db.execute(`SELECT COUNT(*) as count FROM h_penyimpanan WHERE permintaan = 'masuk' AND status = 'diproses'`);
@@ -229,7 +258,7 @@ module.exports = {
             
             const totalPages = Math.ceil(totalRequest / limit);
             const [rows] = await db.execute(
-                `SELECT id, departemen, username, item_id, nama_barang, tanggal FROM h_penyimpanan WHERE permintaan = 'masuk' AND status = 'diproses' LIMIT ? OFFSET ?`, [limit, offset]
+                `SELECT id, departemen, username, item_id, nama_barang, tanggal FROM h_penyimpanan WHERE permintaan = 'masuk' AND status = 'diproses' LIMIT ${limit} OFFSET ${offset}`
             );
             const requests = rows.map(r => ({
                 ...r,
@@ -285,9 +314,9 @@ module.exports = {
     },
 
     getTakeoverRequests: async (req, res) => {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 10; // Jumlah data per halaman
-        const offset = (page - 1) * limit;
+        const page = Math.floor(parseInt(req.query.page)) || 1;
+        const limit = 10;
+        const offset = Math.floor((page -1) * limit);
 
         try {
             const [total] = await db.execute(`SELECT COUNT(*) as count FROM h_penyimpanan WHERE permintaan = 'keluar' AND status = 'diproses'`);
@@ -295,7 +324,7 @@ module.exports = {
             
             const totalPages = Math.ceil(totalRequest / limit);
             const [rows] = await db.execute(
-                `SELECT id, departemen, username, item_id, nama_barang, tanggal FROM h_penyimpanan WHERE permintaan = 'keluar' AND status = 'diproses' LIMIT ? OFFSET ?`, [limit, offset]
+                `SELECT id, departemen, username, item_id, nama_barang, tanggal FROM h_penyimpanan WHERE permintaan = 'keluar' AND status = 'diproses' LIMIT ${limit} OFFSET ${offset}`
             );
             const requests = rows.map(r => ({
                 ...r,

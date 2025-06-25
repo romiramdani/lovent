@@ -1,7 +1,9 @@
 const express = require('express');
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
+const fs = require('fs');
 const path = require('path');
+const {pool} = require('./config/database.js')
+const MySQLStore = require('express-mysql-session')(session);
 const app = express();
 const methodOverride = require('method-override');
 const routes = require('./routes/index.js');
@@ -9,15 +11,8 @@ require('dotenv').config();
 
 const port = process.env.PORT;
 
-const mysqlOptions = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT
-}
-
-const sessionStore = new MySQLStore(mysqlOptions);
+// --- Buat session store dari pool yang sudah ada ---
+const sessionStore = new MySQLStore({}, pool);
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
@@ -47,5 +42,4 @@ app.use('/', routes)
 
 app.listen(port, () => {
     console.log( `server running at http://localhost:${port} `);
-    
 })

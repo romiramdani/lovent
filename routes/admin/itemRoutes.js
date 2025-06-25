@@ -15,6 +15,7 @@ router.get('/return', adminItemControllers.getReturnRequests);
 router.post('/borrow/confirm', adminItemControllers.confirmBorrowRequest);
 router.post('/borrow/reject', adminItemControllers.rejectBorrowRequest);
 router.get('/borrow', adminItemControllers.getBorrowRequests);
+router.get('/list/download', adminItemControllers.downloadItemsCSV);
 router.delete('/list/delete/:id', adminItemControllers.deleteItem);
 router.put('/list/update/:id', adminItemControllers.updateItem);
 router.get('/list/update/:id', adminItemControllers.getUpdateItem);

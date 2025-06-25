@@ -1,12 +1,12 @@
 const {format} = require('@fast-csv/format');
-const db = require('../../config/database.js');
+const {db} = require('../../config/database.js');
 const {formatDate} = require('../../utils/dateFormatter.js');
 
 module.exports = {
     getStoreHistory: async (req, res) => {
-        const page = parseInt(req.query.page) || 1;
+        const page = Math.floor(parseInt(req.query.page)) || 1;
         const limit = 20;
-        const offset = (page -1) * limit;
+        const offset = Math.floor((page -1) * limit);
 
         const search = req.query.search || '';
         const permintaanFilter = req.query.permintaan || '';
@@ -29,8 +29,7 @@ module.exports = {
             const totalHistories = countResult[0].count;
             const totalPages = Math.ceil(totalHistories / limit);
 
-            values.push(limit, offset);
-            const [rows] = await db.execute(`SELECT * FROM h_penyimpanan ${whereClause} LIMIT ? OFFSET ?`, values);
+            const [rows] = await db.execute(`SELECT * FROM h_penyimpanan ${whereClause} LIMIT ${limit} OFFSET ${offset}`, values);
 
             const histories = rows.map(h => ({
                 ...h,
